@@ -1,0 +1,100 @@
+{{!< default}}
+
+<main class="site-main">
+
+    {{#post}}
+
+    <article class="{{post_class}}">
+
+        <header class="gh-article-header gh-canvas">
+            <h1 class="gh-article-title">{{title}}</h1>
+            <div class="post-meta">
+                Last updated on&nbsp;
+                <time datetime="{{date format="YYYY-MM-DD"}}">{{date updated_at}}</time>
+            </div>
+            {{> "post-image"}}
+        </header>
+
+        <div class="gh-content gh-canvas">
+            {{content}}
+        </div>
+
+        {{!-- 피처드 포스트인 경우: 태그별 포스트 목록 출력 --}}
+        {{#if featured}}
+        <section class="featured-tag-posts gh-canvas">
+            <br><h2>목 차</h2><br>
+            {{#if tags}}
+                {{#foreach tags}}
+                    <div class="tag-post-section">
+                        <br><h3>{{name}}</h3>
+                        <ul>
+                            {{!-- 현재 태그({{slug}})를 포함한 포스트를 슬러그 오름차순으로 가져옴  --}}
+                            {{#get "posts" filter="tag:{{slug}}" order="slug asc" limit="all" as |tagPosts|}}
+                                {{#foreach tagPosts}}
+                                    <li>
+                                        <a href="{{url}}" class="featured-tag-post-link" style="font-size: 1.2em; color: darkblue;">
+                                            {{title}}
+                                        </a>
+                                        {{#if meta_description}}
+                                        <div class="meta-description" style="font-size: 0.9em; color: darkgrey; font-weight: bold; margin-top: 0.2em;">
+                                            {{meta_description}}
+                                        </div>
+                                        {{/if}}
+                                    </li>
+                                {{/foreach}}
+                            {{/get}}
+                        </ul>
+                    </div>
+                {{/foreach}}
+            {{/if}}
+        </section>
+        {{/if}}
+
+        {{!-- 피처드 포스트가 아닐 경우에만 이전글/다음글 네비게이션 표시 --}}
+        {{#unless featured}}
+        <div class="pagination-container gh-canvas">
+            {{#if primary_tag}}
+                <nav class="pagination">
+                    {{!-- 이전 글 --}}
+                    {{#get "posts" filter="tags:{{primary_tag.slug}}+id:<{{id}}" limit="1" order="id desc" as |prevPost|}}
+                        {{#if prevPost}}
+                            <div class="pagination-left">
+                                {{#foreach prevPost}}
+                                    <a class="newer-posts" href="{{url}}">
+                                        <span class="pagination-label">Previous</span>
+                                        {{title}}
+                                    </a>
+                                {{/foreach}}
+                            </div>
+                        {{/if}}
+                    {{/get}}
+
+                    {{!-- 다음 글 --}}
+                    {{#get "posts" filter="tags:{{primary_tag.slug}}+id:>{{id}}" limit="1" order="id asc" as |nextPost|}}
+                        {{#if nextPost}}
+                            <div class="pagination-right">
+                                {{#foreach nextPost}}
+                                    <a class="older-posts" href="{{url}}">
+                                        <span class="pagination-label">Next</span>
+                                        {{title}}
+                                    </a>
+                                {{/foreach}}
+                            </div>
+                        {{/if}}
+                    {{/get}}
+                </nav>
+            {{/if}}
+        </div>
+        {{/unless}}
+
+        {{#if comments}}
+            <div class="gh-comments gh-canvas">
+                {{comments}}
+            </div>
+        {{/if}}
+
+    </article>
+
+    {{/post}}
+
+</main>
