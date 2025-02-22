@@ -14,7 +14,7 @@
     {{/tag}}
 
     <div class="post-feed gh-canvas">
-        {{#get "posts" filter="tag:{{tag.slug}}" limit="all" order="slug asc"}}
+        {{#get "posts" filter="tag:{{tag.slug}}+featured:false" limit="all" order="slug asc"}}
             {{#foreach posts}}
                 {{> "loop"}}
             {{/foreach}}
